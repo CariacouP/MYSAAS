@@ -1,6 +1,6 @@
 import streamlit as st
-from app.db import get_data, insert_data
-from app.config import APP_NAME
+from db import get_data, insert_data
+from config import APP_NAME
 
 st.title(APP_NAME)
 
