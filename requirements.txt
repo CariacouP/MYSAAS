@@ -1,3 +1,6 @@
 streamlit
 python-dotenv
 supabase
+auth0-python
+urllib
+requests
