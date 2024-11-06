@@ -4,3 +4,4 @@ supabase
 auth0-python
 urllib3
 requests
+authlib>=1.0
