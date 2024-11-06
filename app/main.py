@@ -1,21 +1,25 @@
 import streamlit as st
 from db import get_data, insert_data
 from config import APP_NAME
-from auth import generate_auth0_login_url, process_auth0_callback
-
+from auth import generate_auth0_login_url, process_auth0_callback, is_authenticated
 st.title(APP_NAME)
 
-# Interface Streamlit
-query_params = st.query_params  # Utilisation de st.query_params pour récupérer les paramètres de l'URL
+# Récupération des paramètres de l'URL pour vérifier la présence du code d'authentification
+query_params = st.query_params
 
-if "callback" in query_params:
-    # Récupère le code de redirection et appelle la fonction de callback
-    code = query_params["callback"][0]
+# Gestion de l'authentification avec Auth0
+if "code" in query_params:
+    # Auth0 a redirigé avec un code d'autorisation
+    code = query_params["code"][0]  # Prend le premier élément s'il y a plusieurs codes
     process_auth0_callback(code)
-else:
-    # Affiche un bouton de connexion
-    st.write("Bienvenue ! Connectez-vous pour continuer.")
+elif not is_authenticated():
+    # Utilisateur non authentifié
+    st.write("Bienvenue ! Veuillez vous connecter pour continuer.")
     if st.button("Se connecter avec Auth0"):
         auth_url = generate_auth0_login_url()
-        # Redirection explicite avec le paramètre `callback` dans l’URL
-        st.write(f'<meta http-equiv="refresh" content="0; url=/?callback=auth0_redirect">', unsafe_allow_html=True)
+        # Redirige vers la page de connexion Auth0
+        st.write(f'<meta http-equiv="refresh" content="0; url={auth_url}">', unsafe_allow_html=True)
+else:
+    # Utilisateur authentifié, chargement de la page principale
+    st.write("Vous êtes connecté ! Bienvenue dans l'application.")
+   
